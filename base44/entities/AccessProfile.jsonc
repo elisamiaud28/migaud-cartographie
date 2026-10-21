@@ -1,0 +1,70 @@
+{
+  "name": "AccessProfile",
+  "type": "object",
+  "properties": {
+    "email": {
+      "type": "string",
+      "description": "Adresse e-mail du compte Base44 concern\u00e9"
+    },
+    "full_name": {
+      "type": "string",
+      "description": "Nom affich\u00e9 du titulaire de l'acc\u00e8s"
+    },
+    "profile_type": {
+      "type": "string",
+      "enum": [
+        "direction",
+        "agence",
+        "commercial"
+      ],
+      "default": "commercial",
+      "description": "direction = tout voir et administrer, agence = sa zone, commercial = son secteur"
+    },
+    "scope": {
+      "type": "string",
+      "description": "Nom de l'agence ou du secteur commercial (vide pour la direction)"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Acc\u00e8s suspendu si d\u00e9sactiv\u00e9"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Commentaire interne"
+    }
+  },
+  "required": [
+    "email",
+    "profile_type"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
