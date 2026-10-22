@@ -6,10 +6,9 @@ import { loadTerritory } from '@/lib/territory/loadTerritory';
 import { scopeTerritory } from '@/lib/territory/scopeTerritory';
 import useAccess from '@/lib/useAccess';
 import SessionBar, { accessLabel } from '@/components/SessionBar';
-import NoAccess from '@/components/NoAccess';
 
 export default function TerritoryMap() {
-  const { loading: authLoading, user, access, suspended } = useAccess();
+  const { user, access } = useAccess();
   const [territory, setTerritory] = useState(null);
   const [error, setError] = useState('');
 
@@ -19,13 +18,10 @@ export default function TerritoryMap() {
       .catch((e) => setError(e?.message || 'Chargement des données impossible.'));
   }, []);
 
-  const needsScope =
-    !!access && access.profile_type !== 'direction' && !access.scope;
-
   const scoped = useMemo(() => {
-    if (!territory || !access || needsScope) return null;
+    if (!territory) return null;
     return scopeTerritory(territory, access);
-  }, [territory, access, needsScope]);
+  }, [territory, access]);
 
   const isEmpty = !!scoped && scoped.data.features.length === 0;
   const isDirection = !!access && access.profile_type === 'direction';
@@ -34,30 +30,6 @@ export default function TerritoryMap() {
     if (!scoped || isEmpty) return undefined;
     return initTerritory(scoped);
   }, [scoped, isEmpty]);
-
-  if (!authLoading && (!access || needsScope)) {
-    return (
-      <NoAccess
-        user={user}
-        reason={
-          needsScope
-            ? "Votre profil est enregistré mais son périmètre n'est pas encore renseigné. La direction doit préciser votre agence ou votre secteur commercial."
-            : undefined
-        }
-      />
-    );
-  }
-
-  if (isEmpty) {
-    return (
-      <NoAccess
-        user={user}
-        reason={`Aucune commune n'est rattachée à votre périmètre (${accessLabel(
-          access
-        )}). Vérifiez le rattachement dans le fichier territorial ou contactez la direction.`}
-      />
-    );
-  }
 
   return (
     <div className="territory-shell relative">
@@ -214,7 +186,7 @@ export default function TerritoryMap() {
         </div>
       </div>
 
-      {(authLoading || (!scoped && !error)) && (
+      {(!scoped && !error) && (
         <div className="pointer-events-none absolute inset-0 z-[900] flex items-center justify-center bg-[color:var(--ink)]/80">
           <div className="flex flex-col items-center gap-3">
             <div className="h-8 w-8 animate-spin rounded-full border-2 border-[color:var(--line)] border-t-[color:var(--accent-soft)]" />
