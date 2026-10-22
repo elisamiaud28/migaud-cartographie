@@ -117,11 +117,9 @@ export default function TerritoryMap() {
           <button id="fit" type="button">
             Recadrer
           </button>
-          {isDirection && (
-            <button id="lock" type="button" title="Données de facturation">
-              🔒
-            </button>
-          )}
+          <button id="lock" type="button" title="Données de facturation">
+            🔒
+          </button>
         </div>
       </aside>
 
