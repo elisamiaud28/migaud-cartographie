@@ -36,6 +36,9 @@ export default function TerritoryMap() {
       <aside id="side">
         <div className="head">
           <SessionBar user={user} access={access} />
+          <p className="mb-1 text-[10px] tracking-[0.08em] text-[color:var(--muted)]">
+            Dernière modification le 26/10/2026
+          </p>
           <p className="eyebrow">Service &amp; Pièces MIGAUD</p>
           <h1>Carte des territoires</h1>
           {access && !isDirection && (
